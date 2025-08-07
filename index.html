@@ -7,6 +7,21 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="background-music" loop>
+        <source src="https://www.soundjay.com/misc/sounds/romantic-piano.mp3" type="audio/mpeg">
+        <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+        <!-- Fallback to a romantic piano piece -->
+        <source src="https://archive.org/download/RomanticPianoMusic/romantic-piano-love-song.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music Control Button -->
+    <div class="music-control">
+        <button id="music-toggle" class="music-button" onclick="toggleMusic()">
+            <span id="music-icon">🎵</span>
+        </button>
+    </div>
+
     <!-- Welcome Page -->
     <div id="welcome-page" class="page active">
         <div class="background-decorations">
@@ -163,6 +178,45 @@
     </div>
 
     <script>
+        // Music functionality
+        let isPlaying = false;
+        const music = document.getElementById('background-music');
+        const musicIcon = document.getElementById('music-icon');
+        
+        // Auto-play music when page loads (with user interaction)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try to play music automatically
+            music.volume = 0.3; // Set volume to 30%
+            
+            // Start music on first user interaction
+            document.addEventListener('click', function startMusic() {
+                if (!isPlaying) {
+                    music.play().then(() => {
+                        isPlaying = true;
+                        musicIcon.textContent = '🎵';
+                    }).catch(e => {
+                        console.log('Auto-play prevented');
+                    });
+                    document.removeEventListener('click', startMusic);
+                }
+            }, { once: true });
+        });
+        
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                musicIcon.textContent = '🔇';
+                isPlaying = false;
+            } else {
+                music.play().then(() => {
+                    musicIcon.textContent = '🎵';
+                    isPlaying = true;
+                }).catch(e => {
+                    console.log('Could not play music');
+                });
+            }
+        }
+
         function showTransition(callback) {
             const overlay = document.getElementById('transition-overlay');
             overlay.classList.add('active');
